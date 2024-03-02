@@ -1,27 +1,122 @@
 # World
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.0.8.
 
-## Development server
+## Create application
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+ng new world --prefix sv --no-standalone
 
-## Code scaffolding
+## Install localization
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+ ng add @angular/localize
 
-## Build
+## Configure locales
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
 
-## Running unit tests
+angular.json
+```json
+"projects" : {
+-----------------------------add------------------------
+"i18n-receipt-demo": {
+"i18n": {
+"sourceLocale": "en-US",
+"locales": {
+"es-PR": {
+"translation": "src/locale/messages.es.xlf",
+"baseHref": "es-PR/"
+}
+}
+},
+-----------------------------------------------------------
+      "projectType": "application",
+...
+...
+"build": {
+"builder": "@angular-devkit/build-angular:browser",
+"options": {
+-------------------------add---------------------------
+"localize": [
+"es-PR"
+],
+--------------------------------------------------------
+            "outputPath": "dist/world"
+```
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
 
-## Running end-to-end tests
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+## Edit html code
 
-## Further help
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+html add i18n
+```html
+
+</h2>
+<p i18n>
+Thank you for shopping with us and your order
+has been processed.
+</p>
+<table>
+<tr>
+<th i18n>Item</th>
+<th i18n>Qty</th>
+ <td>{{"05/01/2022" | date}}</td>
+        <td>{{129 | currency}}</td>
+```
+
+
+## Edit ts code
+
+
+in component.ts
+
+
+```ts
+export class AppComponent {
+title = 'Your Receipt';
+
+constructor(private titleService: Title) {
+this.titleService.setTitle($localize`${this.title}`);
+}
+
+}
+```
+
+
+## Generate messages file and translate
+
+ng extract-i18n --output-path src/locale
+
+in locale folder appears file messages.xlf
+
+we create file messages.es.xlf and copy there info from messages.xlf
+
+under <source> we add <target> with translation
+
+```xlf
+<trans-unit id="3277059772153279197" datatype="html">
+<source>hero image</source>
+<target>imagen de héroe</target>
+```
+
+
+## Build versions
+
+ng serve
+ng build --localize
+
+## Test on http-server
+
+
+npm install http-server -g
+
+http-server dist/world
+
+serve dist/world
+
+then you can append to url your locales /en-US or /es-PR
+
+es-PR/
+uk-UA/
+de-DE/
+en-US/
+ru-RU/
+
